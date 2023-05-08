@@ -14,6 +14,8 @@ function Provider({ children }) {
     const [userActivity, setUserActivity] = useState(0)
     const [userGoal , setUserGoal] = useState(0)
     const [userSchedule , setUserSchedule] = useState(0)
+    const [userHeight, setUserHeight] = useState(175)
+    const [userWeight, setUserWeight] = useState(70)
     return (
     <Context.Provider value={{
         currentPage, 
@@ -23,13 +25,17 @@ function Provider({ children }) {
         userActivity,
         userGoal,
         userSchedule,
+        userHeight,
+        userWeight,
         setCurrentPage, 
         setPageLoaded,
         setUserAge,
         setUserGender,
         setUserActivity,
         setUserGoal,
-        setUserSchedule
+        setUserSchedule,
+        setUserHeight,
+        setUserWeight
         }}>
         {children}
     </Context.Provider>

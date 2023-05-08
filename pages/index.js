@@ -1,28 +1,52 @@
 import Head from 'next/head'
 import { Inter } from 'next/font/google'
-import { HeaderSideDiv , HomePageTitles , HomePageImage , CustomRadio} from '@/components'
+import { 
+  HeaderSideDiv ,
+  HomePageTitles , 
+  HomePageImage , 
+  CustomRadio, 
+  PageIndicator,
+  SliderInput
+} from '@/components'
 import { useContext, useEffect } from 'react'
 import Context from '@/components/Context'
 import { useState } from 'react'
+import CustomButton from '@/components/CustomButton'
 
 const inter = Inter({ subsets: ['latin'] })
 
+// CHOICEES FOR THE PARAMETERS OF THE QUERY
+
 const goalChoices = {
   label: 'Define your goal',
+  boxSize:"large",
+  defaultValue:0,
+  subject:"goal",
+  choices: [
+    {name:"LOOSE WEIGHT",etiquet:""},
+    {name:"GAIN WEIGHT",etiquet:""},
+    {name:"GENERAL",etiquet:""},
+    {name:"ENDURANCE",etiquet:""},
+    {name:"BUILD MUSCLE",etiquet:""},
+  ],
+}
+
+const ageChoices = {
+  label: 'AGE',
   boxSize:"small",
   defaultValue:0,
   subject:"goal",
   choices: [
-    {name:"LOOSE WEIGHT",etiquet:"<12"},
-    {name:"GAIN WEIGHT",etiquet:"13-17"},
-    {name:"GENERAL",etiquet:"13-17"},
-    {name:"ENDURANCE",etiquet:"13-17"},
-    {name:"BUILD MUSCLE",etiquet:"13-17"},
+    {name:"CHILD",etiquet:"<12"},
+    {name:"TEEN",etiquet:"13-17"},
+    {name:"YOUNG ADULT",etiquet:"18-37"},
+    {name:"MIDDLE AGED",etiquet:"37-50"},
+    {name:"OLD",etiquet:"50>"},
   ],
 }
 
 const genderChoices = {
-  label: 'Gender',
+  label: 'GENDER',
   boxSize:"small",
   defaultValue:0,
   subject:"gender",
@@ -33,7 +57,7 @@ const genderChoices = {
 }
 
 const activityChoices = {
-  label: 'Define your goal',
+  label: 'DAILY ACTIVITY LEVEL',
   boxSize:"small",
   defaultValue:0,
   subject:"activity",
@@ -45,14 +69,90 @@ const activityChoices = {
   ],
 }
 
+const scheduleChoices = {
+  label: 'HOW IS YOUR WEEKLY SCHEDULE',
+  boxSize:"large",
+  defaultValue:0,
+  subject:"schedule",
+  choices: [
+    {name:"OPEN",etiquet:""},
+    {name:"FLEXIBLE",etiquet:""},
+    {name:"BUSY",etiquet:""},
+  ],
+}
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 export default function Home() {
 
   const context = useContext(Context)
-  console.log(context.currentPage);
 
   useEffect(() => {
     context.setPageLoaded(true)
   },[context.currentPage])
+
+  const handleHeightChange = (event) => {
+    context.setUserHeight(event.target.value)
+  }
+  const handleWeightChange = (event) => {
+    context.setUserWeight(event.target.value)
+  }
+
+
+  const heightProps = {
+    title:"HEIGHT",
+    max:230,
+    min:80,
+    value:context.userHeight,
+    onChange: handleHeightChange,
+    unity:"cm"
+  }
+
+  const weightProps = {
+    title:"WEIGHT",
+    max:250,
+    min:20,
+    value:context.userWeight,
+    onChange: handleWeightChange,
+    unity:"kg"
+  }
+  useEffect(() => {
+    console.log(context.userHeight);
+  },[context.userHeight])
+
+  const nextButtonProps = {
+    position:"absolute bottom-[70px] right-[100px]",
+    content:"NEXT",
+    type:"button",
+    handleClick:() => {
+      context.setPageLoaded(false)
+      setTimeout(() => {
+          context.setCurrentPage(context.currentPage+1)
+      },1500)}
+  }
+
+  const previousButtonProps={
+    position:"absolute bottom-[70px] left-[100px]",
+    content:"PREVIOUS",
+    type:"button",
+    handleClick:() => {
+      context.setPageLoaded(false)
+      setTimeout(() => {
+          context.setCurrentPage(context.currentPage-1)
+      },1500)}
+  }
+  const submitButtonProps={
+    position:"absolute bottom-[70px] right-[100px]",
+    content:"SUBMIT",
+    type:"submit",
+    handleClick:() => {
+      context.setPageLoaded(false)
+      setTimeout(() => {
+          context.setCurrentPage(context.currentPage)
+      },1500)}
+  }
+
 
   return (
     <div
@@ -88,18 +188,50 @@ export default function Home() {
         )
       }
 
-      {/* FORM PART 1 */}
+      {/* ---------------------------- FORM ---------------------- */}
 
       {
-        context.currentPage === 2 && (
-          <div>
-            <CustomRadio value={goalChoices} />
-            <CustomRadio value={genderChoices} />
-            <CustomRadio value={activityChoices} />
-          </div>
+        context.currentPage === 2 | context.currentPage === 3 && (
+         <div className='flex flex-col gap-2'>
+            <div 
+            className='flex items-center justify-center'
+            >
+              <PageIndicator />
+            </div>
+           {
+            context.currentPage === 2 && (
+              <div>
+                <div 
+                className='grid lg:grid-cols-2'
+                >
+                  <div>
+                    <CustomRadio value={ageChoices} />
+                    <CustomRadio value={genderChoices} />
+                    <CustomRadio value={activityChoices} />
+                  </div>
+                  <div className='p-10 flex flex-col gap-10'>
+                    <SliderInput value={heightProps}/> 
+                    <SliderInput value={weightProps} />
+                  </div>
+                </div>
+                <CustomButton props={nextButtonProps} />
+              </div>
+            )
+           }
+           {
+            context.currentPage === 3 && (
+              <div>
+                <CustomRadio value={goalChoices} />
+                <CustomRadio value={scheduleChoices} />
+                <CustomButton props={previousButtonProps} />
+                <CustomButton props={submitButtonProps}/>
+              </div>
+            )
+           }
+            
+         </div>
         )
       }
-
     </div>
   )
 }

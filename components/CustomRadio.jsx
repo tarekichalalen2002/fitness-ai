@@ -23,7 +23,7 @@ function CustomRadio({ value }) {
 
     console.log(value.subject + " :" + context.userGoal);
   return (
-    <div className={`flex flex-col gap-3 p-8 text-[#146C94] pl-10
+    <div className={`flex flex-col gap-3 p-3 text-[#146C94] pl-10
     ${context.pageLoaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[30px]"}
     ease-in-out duration-1000
     `}>
@@ -37,10 +37,11 @@ function CustomRadio({ value }) {
                     className="flex flex-col items-center gap-1"
                     >
                         <div className={`
-                        ${value.boxSize == "small" ? "w-[75px] h-[35px]" : "w-[137px] min-h-[51px]"} border 
+                        ${value.boxSize == "small" ? "w-[100px] h-[45px] text-[12px]" : "w-[150px] h-[65px] text-[16px]"} border 
                         border-[#146C94] text-white rounded-xl text-center
-                        font-bold text-[10px] flex items-center justify-center p-2 hover:cursor-pointer
+                        font-bold  flex items-center justify-center p-2 hover:cursor-pointer
                         ${index == selected && "bg-[#2FE6DE]"}
+                        ease-in-out duration-300
                         `}
                         onClick={() => setSelected(index)}
                         >

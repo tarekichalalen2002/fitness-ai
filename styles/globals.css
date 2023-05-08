@@ -14,3 +14,22 @@ body{
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #146C94;
 }
+
+.slider-input {
+  width: 400px;
+  height: 3px;
+  -webkit-appearance: none;
+  background-color: #2FE6DE;
+  outline: none;
+  border-radius: 10px;
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 33px;
+  height: 33px;
+  background-color: #2FE6DE;
+  border-radius: 50%;
+  cursor: pointer;
+}
