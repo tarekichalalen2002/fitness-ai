@@ -6,7 +6,13 @@ import {
   HomePageImage , 
   CustomRadio, 
   PageIndicator,
-  SliderInput
+  SliderInput,
+  LoginForm,
+  Notification,
+  NutritionsResult,
+  TrainingResult,
+  AdviceResult,
+  HealthResult
 } from '@/components'
 import { useContext, useEffect } from 'react'
 import Context from '@/components/Context'
@@ -17,17 +23,37 @@ const inter = Inter({ subsets: ['latin'] })
 
 // CHOICEES FOR THE PARAMETERS OF THE QUERY
 
+
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+export default function Home() {
+
+  const context = useContext(Context)
+
+  useEffect(() => {
+    context.setPageLoaded(true)
+  },[context.currentPage])
+
+  const handleHeightChange = (event) => {
+    context.setUserHeight(event.target.value)
+  }
+  const handleWeightChange = (event) => {
+    context.setUserWeight(event.target.value)
+  }
+
+  
 const goalChoices = {
   label: 'Define your goal',
   boxSize:"large",
   defaultValue:0,
   subject:"goal",
   choices: [
-    {name:"LOOSE WEIGHT",etiquet:""},
-    {name:"GAIN WEIGHT",etiquet:""},
+    {name:"LOSS",etiquet:""},
+    {name:"GAIN",etiquet:""},
     {name:"GENERAL",etiquet:""},
     {name:"ENDURANCE",etiquet:""},
-    {name:"BUILD MUSCLE",etiquet:""},
+    {name:"MUSCLE",etiquet:""},
   ],
 }
 
@@ -35,12 +61,12 @@ const ageChoices = {
   label: 'AGE',
   boxSize:"small",
   defaultValue:0,
-  subject:"goal",
+  subject:"age",
   choices: [
     {name:"CHILD",etiquet:"<12"},
     {name:"TEEN",etiquet:"13-17"},
-    {name:"YOUNG ADULT",etiquet:"18-37"},
-    {name:"MIDDLE AGED",etiquet:"37-50"},
+    {name:"YOUNGADULT",etiquet:"18-37"},
+    {name:"MIDDLE",etiquet:"37-50"},
     {name:"OLD",etiquet:"50>"},
   ],
 }
@@ -65,7 +91,7 @@ const activityChoices = {
     {name:"LOW",etiquet:""},
     {name:"MEDIUM",etiquet:""},
     {name:"HIGH",etiquet:""},
-    {name:"VERY HIGH",etiquet:""},
+    {name:"VERYHIGH",etiquet:""},
   ],
 }
 
@@ -80,24 +106,6 @@ const scheduleChoices = {
     {name:"BUSY",etiquet:""},
   ],
 }
-
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-export default function Home() {
-
-  const context = useContext(Context)
-
-  useEffect(() => {
-    context.setPageLoaded(true)
-  },[context.currentPage])
-
-  const handleHeightChange = (event) => {
-    context.setUserHeight(event.target.value)
-  }
-  const handleWeightChange = (event) => {
-    context.setUserWeight(event.target.value)
-  }
 
 
   const heightProps = {
@@ -117,9 +125,6 @@ export default function Home() {
     onChange: handleWeightChange,
     unity:"kg"
   }
-  useEffect(() => {
-    console.log(context.userHeight);
-  },[context.userHeight])
 
   const nextButtonProps = {
     position:"absolute bottom-[70px] right-[100px]",
@@ -142,15 +147,50 @@ export default function Home() {
           context.setCurrentPage(context.currentPage-1)
       },1500)}
   }
+
+  const getResult = async () => {
+    const formData = {
+      username:context.username,
+      goal:(goalChoices.choices[context.userGoal]).name,
+      age: (ageChoices.choices[context.userAge]).name,
+      gender: (genderChoices.choices[context.userGender]).name,
+      activity: (activityChoices.choices[context.userActivity]).name,
+      schedule: (scheduleChoices.choices[context.userSchedule]).name,
+      height: context.userHeight/100,
+      weight: context.userWeight/1
+    }
+    console.log(formData);
+
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/submit/",
+      {
+        method:"POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      }
+    )
+    const serverResponse = await response.json()
+    if(serverResponse.status === "success"){
+      console.log(serverResponse.extra);
+      context.setUserResult(serverResponse.data);
+      console.log(serverResponse.data);
+    }
+  }
+
   const submitButtonProps={
     position:"absolute bottom-[70px] right-[100px]",
     content:"SUBMIT",
-    type:"submit",
-    handleClick:() => {
+    type:"button",
+    handleClick: async () => {
+      await getResult()
       context.setPageLoaded(false)
-      setTimeout(() => {
-          context.setCurrentPage(context.currentPage)
-      },1500)}
+      setTimeout(() => {context.setCurrentPage(context.currentPage+1)},1500)
+    }
+  }
+
+  const LoginNotProps = {
+    title:"LOGGED IN SUCCESSFULY",
+    content:"See your history"
   }
 
 
@@ -164,6 +204,8 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      
+      {context.notificationTriggered && <Notification />}
 
       {/* WELCOME VIEW */}
 
@@ -177,29 +219,31 @@ export default function Home() {
         )
       }
 
-      {/* LOGIN PAGE */}
+      {/* ----------------------------- AUTHENTIFICATION ------------------------- */}
 
       {
-        context.currentPage === 1 && (
+        context.currentPage === 2 && (
           <div>
-            <HeaderSideDiv />
-
+              <LoginForm />
           </div>
         )
       }
 
       {/* ---------------------------- FORM ---------------------- */}
 
-      {
-        context.currentPage === 2 | context.currentPage === 3 && (
-         <div className='flex flex-col gap-2'>
+       {
+        (context.currentPage === 3 || context.currentPage === 4)&& (
+         <div className={`
+         flex flex-col gap-2
+         `}>
             <div 
-            className='flex items-center justify-center'
+            className={`
+            flex items-center justify-center
+            `}
             >
               <PageIndicator />
             </div>
-           {
-            context.currentPage === 2 && (
+            {context.currentPage === 3 && (
               <div>
                 <div 
                 className='grid lg:grid-cols-2'
@@ -219,9 +263,10 @@ export default function Home() {
             )
            }
            {
-            context.currentPage === 3 && (
+            context.currentPage === 4 && (
               <div>
                 <CustomRadio value={goalChoices} />
+                <br/>
                 <CustomRadio value={scheduleChoices} />
                 <CustomButton props={previousButtonProps} />
                 <CustomButton props={submitButtonProps}/>
@@ -230,6 +275,27 @@ export default function Home() {
            }
             
          </div>
+        )
+      } 
+
+      {/* ---------------------------- RESULT ------------------------------------------- */}
+
+
+
+      {
+        context.currentPage === 5 && (
+          <div className='flex flex-col gap-5 w-full'>
+            <div className='flex flex-row gap-4'>
+              <HealthResult />
+              <TrainingResult />
+            </div>
+            <div className='flex gap-10'>
+              <AdviceResult />
+              <NutritionsResult />
+            </div>
+          </div>
+          // Don't forget to intrduce the waiting motif 
+          
         )
       }
     </div>

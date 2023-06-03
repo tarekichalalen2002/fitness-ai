@@ -9,7 +9,11 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors:{
+        "nutrition-card-color": "rgba(41, 41, 44, 0.74)"
+      }
+    },
   },
   plugins: [],
 }

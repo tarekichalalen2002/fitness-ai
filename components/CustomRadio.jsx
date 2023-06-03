@@ -7,6 +7,22 @@ function CustomRadio({ value }) {
 
     useEffect(() => {
         if(value.subject == "goal"){
+            setSelected(context.userGoal)
+        } else if(value.subject == "age"){
+            setSelected(context.userAge)
+        } else if(value.subject == "activity"){
+            setSelected(context.userActivity)
+        } else if(value.subject == "gender"){
+            setSelected(context.userGender)
+        } else if(value.subject == "schedule"){
+            setSelected(context.userSchedule)
+        } else{
+            return
+        }
+    },[])
+
+    useEffect(() => {
+        if(value.subject == "goal"){
             context.setUserGoal(selected)
         } else if(value.subject == "age"){
             context.setUserAge(selected)
@@ -20,8 +36,6 @@ function CustomRadio({ value }) {
             return
         }
     },[selected])
-
-    console.log(value.subject + " :" + context.userGoal);
   return (
     <div className={`flex flex-col gap-3 p-3 text-[#146C94] pl-10
     ${context.pageLoaded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[30px]"}

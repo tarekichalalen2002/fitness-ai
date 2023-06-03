@@ -10,7 +10,6 @@ body{
 
 .main-title{
   color: #1A1B1F;
-  font-size: 80px;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: #146C94;
 }
@@ -32,4 +31,17 @@ body{
   background-color: #2FE6DE;
   border-radius: 50%;
   cursor: pointer;
+}
+.titles{
+  color: #1A1B1F;
+  font-size: 20px;
+  font-size: 20px;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #146C94;
+  }
+
+.nutritions-card{
+  box-shadow: 4px 4px 4px #00CECB;
+  /* filter: blur(2.5px); */
+  border-radius: 5px;
 }

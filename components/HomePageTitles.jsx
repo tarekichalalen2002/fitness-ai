@@ -14,7 +14,12 @@ function HomePageTitles() {
     handleClick:() => {
       context.setPageLoaded(false)
       setTimeout(() => {
-          context.setCurrentPage(2)
+          if(context.username){
+            context.setCurrentPage(3)
+          }
+          else{
+            context.setCurrentPage(2)
+          }
       },1500)}
   }
   return (
@@ -32,7 +37,7 @@ function HomePageTitles() {
           font-medium leading-[72px]'
           >
               <h1
-              className='main-title'
+              className='main-title text-[80px]'
               >FITNESS - AI</h1>
           </div>
 
